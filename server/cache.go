@@ -39,7 +39,7 @@ func (c *Cache) insert(key string, value Mail) {
 	defer c.lock.Unlock()
 	var skip bool
 	for _, l := range c.listeners {
-		skip = skip || (*l)(value)
+		skip = (*l)(value) || skip
 	}
 	if !skip {
 		a, _ := c.data[key]
