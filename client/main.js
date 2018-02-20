@@ -13,15 +13,15 @@ const state = (initialState = {
 });
 
 // <DEBUG>
-state.name = "ALICE";
-state.inbox = [
-  { to: "ALICE", from: "BOB", message: "hi", date: new Date().toJSON() },
-  { to: "ALICE", from: "BOB", message: "hi again", date: new Date().toJSON() },
-];
+//state.name = "ALICE";
+//state.inbox = [
+//  { to: "ALICE", from: "BOB", message: "hi", date: new Date().toJSON() },
+//  { to: "ALICE", from: "BOB", message: "hi again", date: new Date().toJSON() },
+//];
 // </DEBUG>
 
 const actions = {
-  onMail: m => () => ({ inbox: inbox.concat([m]) }),
+  onMail: m => state => ({ inbox: state.inbox.concat([m]) }),
   form: {
     onNameChange: e => () => ({ name: e.target.value.toUpperCase() || "" }),
     onToChange: e => () => ({ to: e.target.value.toUpperCase() || "" }),
@@ -32,7 +32,7 @@ const actions = {
     if (state.form.name === state.name) {
       return;
     }
-    // connect(name, actions.onMail);
+    connect(state.form.name, actions.onMail);
     return Object.assign({}, initialState, { name: state.form.name });
   },
   disconnect: e => (state, actions) => {
@@ -44,8 +44,11 @@ const actions = {
     if (state.form.to === "" || state.name === "") {
       return;
     }
-    // send(state.form.to, state.name, state.form.message);
+    send(state.form.to, state.name, state.form.message);
     return { popup: { type: "sent" } };
+  },
+  openMail: m => (state, actions) => {
+    return { popup: { type: "mail", props: m }, inbox: state.inbox.filter(M => M !== m) };
   },
   closeModal: () => () => ({ popup: undefined }),
 };
@@ -116,7 +119,9 @@ const view = (state, actions) =>
               undefined,
               state.inbox.map(m =>
                 h("li", undefined, [
-                  h("div", { class: "mail" }, [h("span", undefined, `From: ${m.from}`)]),
+                  h("div", { class: "mailbox-message", onclick: () => actions.openMail(m) }, [
+                    h("span", undefined, `From: ${m.from}`),
+                  ]),
                 ]),
               ),
             ),
@@ -136,7 +141,6 @@ const view = (state, actions) =>
       ? h("div", { id: "modal", class: "modal" }, [
           h("div", { class: "modal-content" }, [
             h("span", { class: "modal-close", onclick: actions.closeModal }, "×"),
-            // fill in
             (() => {
               switch (state.popup.type) {
                 case "mail":
@@ -147,7 +151,6 @@ const view = (state, actions) =>
                   return undefined;
               }
             })(),
-            h("p", undefined, "some text..."),
           ]),
         ])
       : undefined,
@@ -164,10 +167,10 @@ function connect(name = "", listener) {
     ws = undefined;
   }
   if (!name) {
-    return;
+    retun;
   }
-  // ws = new WebSocket(`ws://${WEBSOCKET_HOST}/${name}`);
-  // ws.onmessage = e => listener(JSON.parse(e.data));
+  ws = new WebSocket(`ws://${WEBSOCKET_HOST}/${name}`);
+  ws.onmessage = e => listener(JSON.parse(e.data));
 }
 
 function send(to, from, message) {

@@ -78,6 +78,10 @@ main > form > button {
   grid-area: sidebar;
 }
 
+.mailbox-message {
+  cursor: pointer;
+}
+
 footer {
   grid-area: footer;
   display: flex;
