@@ -1,0 +1,87 @@
+body {
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-gap: 0;
+  grid-template-rows: 100px auto 100px;
+  grid-template-areas: "header" "main" "footer";
+}
+
+header {
+  background-color: #003729;
+  color: #ccc;
+  grid-area: header;
+  font-size: 4em;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+main {
+  background-color: #6fa698;
+  grid-area: main;
+  display: flex;
+}
+
+main > form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-self: center;
+}
+
+main > form > label {
+  cursor: pointer;
+  align-self: center;
+  width: 80%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+main > form > label > :first-child {
+  width: 100px;
+  text-align: right;
+  margin-right: 5px;
+}
+
+main > form > label > input {
+  height: 50px;
+}
+
+main > form > label > textarea {
+  width: 400px;
+  height: 200px;
+}
+
+main > form > button {
+  cursor: pointer;
+  align-self: center;
+  margin-top: 20px;
+  width: 70%;
+  height: 50px;
+}
+
+footer {
+  grid-area: footer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #003729;
+  color: #ccc;
+}
+
+footer > a {
+  color: #ccc;
+  opacity: 0.3;
+}
+
+.hide {
+  display: none;
+}
