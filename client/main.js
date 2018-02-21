@@ -82,6 +82,7 @@ const view = (state, actions) =>
                   placeholder: "BOB",
                   value: state.form.to,
                   oninput: actions.form.onToChange,
+                  oncreate: el => el.focus(),
                 }),
               ]),
               h("label", undefined, [
@@ -102,6 +103,7 @@ const view = (state, actions) =>
                   placeholder: "ALICE",
                   value: state.form.name,
                   oninput: actions.form.onNameChange,
+                  oncreate: el => el.focus(),
                 }),
               ]),
               h("button", { onclick: actions.connect }, "ENTER"),
