@@ -5,126 +5,86 @@ body {
 #app {
   width: 100vw;
   height: 100vh;
+  max-width: 700px;
+  margin: auto;
   display: grid;
   grid-gap: 0;
-  grid-template-rows: 100px auto 100px;
-  grid-template-columns: 5fr 1fr;
+  grid-template-rows: 150px auto 150px;
+  grid-template-areas: "header" "main" "footer";
+}
+
+#app.is-logged-in {
+  grid-template-columns: 3fr 1fr;
   grid-template-areas: "header header" "main sidebar" "footer footer";
 }
 
 header {
-  background-color: #003729;
-  color: #ccc;
   grid-area: header;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-header > h1 {
-  font-size: 4em;
-  font-weight: 700;
 }
 
 main {
-  background-color: #6fa698;
   grid-area: main;
-  display: flex;
 }
 
-main > form {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  align-self: center;
-}
-
-main > form > label {
-  cursor: pointer;
-  align-self: center;
-  width: 80%;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-main > form > label > :first-child {
-  width: 100px;
-  text-align: right;
-  margin-right: 5px;
-}
-
-main > form > label > input {
-  height: 50px;
-}
-
-main > form > label > textarea {
-  width: 400px;
-  height: 200px;
-}
-
-main > form > button {
-  cursor: pointer;
-  align-self: center;
-  margin-top: 20px;
-  width: 70%;
-  height: 50px;
-}
-
-#mailbox {
+aside {
   grid-area: sidebar;
-  background-color: #6fa698;
-  border-left: 2px solid black;
-  text-align: center;
-  overflow-y: auto;
-}
-
-#mailbox > ul {
-  margin: 0;
-  padding: 0;
-}
-
-.mailbox-message {
-  cursor: pointer;
-  list-style: none;
-  display: flex;
-  align-items: center;
-  line-height: 50px;
-  margin: 5px;
-  background-color: white;
-  border: 2px solid black;
-}
-
-.mailbox-message > :first-child {
-  font-size: 2em;
-  padding-left: 10px;
-}
-
-.mailbox-message > :last-child {
-  flex: 1;
-  text-align: center;
 }
 
 footer {
   grid-area: footer;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: #003729;
-  color: #ccc;
 }
 
-footer > a {
-  color: #ccc;
-  opacity: 0.3;
+/* sent modal */
+
+.sent-modal {
+  text-align: center;
+  font-size: 2em;
 }
 
-.hide {
-  display: none;
+.sent-modal::after {
+  content: "✓";
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  margin: 5px;
+  color: green;
+}
+
+/* mail modal */
+
+.mail-modal {
+  margin: 50px;
+}
+.mail-modal-date {
+  text-align: right;
+}
+.mail-modal-to {
+  font-size: 2em;
+  font-weight: 700;
+}
+.mail-modal-to::before {
+  font-size: 1rem;
+  font-weight: 500;
+  content: "To: ";
+  color: rgba(0, 0, 0, 0.6);
+}
+.mail-modal-from {
+  font-size: 2em;
+  font-weight: 700;
+}
+.mail-modal-from::before {
+  font-size: 1rem;
+  font-weight: 500;
+  content: "From: ";
+  color: rgba(0, 0, 0, 0.6);
+}
+.mail-modal-message {
+  margin-top: 10px;
+}
+.mail-modal-message::before {
+  content: "Message: ";
+  color: rgba(0, 0, 0, 0.6);
 }
 
 /* The Modal (background) */

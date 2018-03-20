@@ -57,10 +57,10 @@ const state = (initialState = {
 });
 
 // <DEBUG>
-// state.name = "ALICE";
-// for (let i = 0; i < 2; i++) {
-//   state.inbox.push({ to: "ALICE", from: "BOB", message: `hi ${i}`, date: new Date().toJSON() });
-// }
+state.name = "ALICE";
+for (let i = 0; i < 2; i++) {
+  state.inbox.push({ to: "ALICE", from: "BOB", message: `hi ${i}`, date: new Date().toJSON() });
+}
 // </DEBUG>
 
 const actions = {
@@ -115,61 +115,89 @@ const actions = {
 const MailModal = mail =>
   h(
     "div",
-    { class: "view-mail" },
-    h("p", undefined, `sent at ${mail.date}`),
-    h("div", undefined, "To: ", h("h3", undefined, mail.to)),
-    h("div", undefined, "From: ", h("h3", undefined, mail.from)),
-    h("div", undefined, "Message: ", h("p", undefined, mail.message)),
+    { class: "mail-modal" },
+    h("div", { class: "mail-modal-date" }, `${new Date(mail.date).toLocaleString()}`),
+    h("div", { class: "mail-modal-to" }, mail.to),
+    h("div", { class: "mail-modal-from" }, mail.from),
+    h("div", { class: "mail-modal-message" }, mail.message),
   );
 
-const SentModal = () => h("div", undefined, [h("p", undefined, "message sent ✓")]);
+const SentModal = () => h("div", { class: "sent-modal" }, "SENT");
 
 const LoginForm = (state, actions) =>
   h(
     "form",
-    undefined,
+    {
+      style: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+        margin: 0,
+        flex: "1",
+      },
+    },
+    h("input", {
+      style: { height: "50px", width: "200px", marginBottom: "20px" },
+      type: "text",
+      placeholder: "ALICE",
+      value: state.form.name,
+      oninput: actions.form.onNameChange,
+      oncreate: el => el.focus(),
+    }),
     h(
-      "label",
-      undefined,
-      h("span", undefined, "Name: "),
-      h("input", {
-        type: "text",
-        placeholder: "ALICE",
-        value: state.form.name,
-        oninput: actions.form.onNameChange,
-        oncreate: el => el.focus(),
-      }),
+      "button",
+      {
+        style: { width: "100px", height: "100px" },
+        disabled: !state.form.name,
+        title: !state.form.name ? "name required" : undefined,
+        type: "submit",
+        onclick: actions.login,
+      },
+      "LOGIN",
     ),
-    h("button", { onclick: actions.login }, "LOGIN"),
   );
 
 const SendForm = (state, actions) =>
   h(
     "form",
-    undefined,
+    {
+      style: {
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-around",
+        flex: 1,
+        margin: 0,
+        alignItems: "flex-start",
+      },
+    },
+    h("input", {
+      style: { height: "50px", width: "200px" },
+      required: true,
+      type: "text",
+      placeholder: "TO:",
+      value: state.form.to,
+      oninput: actions.form.onToChange,
+      oncreate: el => el.focus(),
+    }),
+    h("textarea", {
+      required: true,
+      style: { width: "100%", height: "300px" },
+      placeholder: "MESSAGE...",
+      value: state.form.message,
+      oninput: actions.form.onMessageChange,
+    }),
     h(
-      "label",
-      undefined,
-      h("span", undefined, "To: "),
-      h("input", {
-        type: "text",
-        placeholder: "TO:",
-        value: state.form.to,
-        oninput: actions.form.onToChange,
-        oncreate: el => el.focus(),
-      }),
+      "button",
+      {
+        style: { width: "80%", height: "100px", alignSelf: "center" },
+        title: !state.form.to || !state.form.message ? "TO and MESSAGE fields required" : undefined,
+        disabled: !state.form.to || !state.form.message,
+        type: "submit",
+        onclick: actions.send,
+      },
+      "SEND",
     ),
-    h(
-      "label",
-      undefined,
-      h("span", undefined, "Message: "),
-      h("textarea", {
-        placeholder: "message...",
-        value: state.form.message,
-        oninput: actions.form.onMessageChange,
-      }),
-    ),
-    h("button", { type: "submit", onclick: actions.send }, "ENTER"),
   );
 
 const Popup = (state, actions) =>
@@ -195,57 +223,70 @@ const Popup = (state, actions) =>
 
 const Mailbox = (state, actions) =>
   h(
-    "div",
-    { id: "mailbox" },
+    "aside",
+    { style: { paddingLeft: "10px" } },
     h(
       "ul",
-      undefined,
+      { style: { padding: "0", margin: "0" } },
       state.inbox.map(m =>
         h(
           "li",
-          { class: "mailbox-message", onclick: () => actions.openMail(m) },
-          h("span", undefined, "✉"),
-          h("span", undefined, m.from),
+          {
+            style: {
+              cursor: "pointer",
+              listStyle: "none",
+              display: "flex",
+              alignItems: "center",
+              lineHeight: "50px",
+              margin: "5px",
+              backgroundColor: "white",
+              border: "2px solid black",
+            },
+            onclick: () => actions.openMail(m),
+          },
+          h("span", { style: { fontSize: "2em", paddingLeft: "10px" } }, "✉"),
+          h("span", { style: { flex: 1, textAlign: "center" } }, m.from),
         ),
       ),
     ),
   );
 
 const Header = name =>
-  h("header", undefined, h("h1", undefined, `WELCOME${name ? " " + name : ""}!`));
+  h(
+    "header",
+    { style: { textAlign: "center" } },
+    h("h1", { style: { fontSize: "4em", fontWeight: "700" } }, `WELCOME${name ? " " + name : ""}!`),
+  );
 
 const Footer = logout =>
   h(
     "footer",
-    undefined,
-    h(
-      "p",
-      undefined,
-      "Your message will show up right after it is sent. Once shown, your message is deleted.",
-    ),
-    h(
-      "div",
-      {
-        style: {
-          display: "flex",
-          justifyContent: "space-between",
-          maxWidth: "500px",
-          width: "100%",
-        },
+    {
+      style: {
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
       },
-      h("a", { href: "#TODO" }, "source"),
-      h("a", { href: "#", onclick: actions.logout }, "logout"),
-    ),
+    },
+    h("a", { href: "#", onclick: logout }, "logout"),
+    h("a", { href: "#TODO" }, "source"),
   );
 
 const view = (state, actions) => {
-  return h("div", { id: "app", oncreate: actions.login }, [
+  return h(
+    "div",
+    { id: "app", class: state.name ? "is-logged-in" : "", oncreate: actions.login },
     Header(state.name),
-    h("main", undefined, state.name ? SendForm(state, actions) : LoginForm(state, actions)),
+    h(
+      "main",
+      { style: { display: "flex" } },
+      state.name ? SendForm(state, actions) : LoginForm(state, actions),
+    ),
     state.name && Mailbox(state, actions),
-    Footer(),
+    Footer(actions.logout),
     state.popup && Popup(state, actions),
-  ]);
+  );
 };
 
 const main = app(state, actions, view, document.body);
