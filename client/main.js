@@ -57,11 +57,10 @@ const state = (initialState = {
 });
 
 // <DEBUG>
-//state.name = "ALICE";
-//state.inbox = [
-//  { to: "ALICE", from: "BOB", message: "hi", date: new Date().toJSON() },
-//  { to: "ALICE", from: "BOB", message: "hi again", date: new Date().toJSON() },
-//];
+// state.name = "ALICE";
+// for (let i = 0; i < 2; i++) {
+//   state.inbox.push({ to: "ALICE", from: "BOB", message: `hi ${i}`, date: new Date().toJSON() });
+// }
 // </DEBUG>
 
 const actions = {
@@ -114,18 +113,24 @@ const actions = {
 };
 
 const MailModal = mail =>
-  h("div", { class: "view-mail" }, [
+  h(
+    "div",
+    { class: "view-mail" },
     h("p", undefined, `sent at ${mail.date}`),
     h("div", undefined, "To: ", h("h3", undefined, mail.to)),
     h("div", undefined, "From: ", h("h3", undefined, mail.from)),
-    h("p", undefined, mail.message),
-  ]);
+    h("div", undefined, "Message: ", h("p", undefined, mail.message)),
+  );
 
 const SentModal = () => h("div", undefined, [h("p", undefined, "message sent ✓")]);
 
 const LoginForm = (state, actions) =>
-  h("form", undefined, [
-    h("label", undefined, [
+  h(
+    "form",
+    undefined,
+    h(
+      "label",
+      undefined,
       h("span", undefined, "Name: "),
       h("input", {
         type: "text",
@@ -134,83 +139,112 @@ const LoginForm = (state, actions) =>
         oninput: actions.form.onNameChange,
         oncreate: el => el.focus(),
       }),
-    ]),
+    ),
     h("button", { onclick: actions.login }, "LOGIN"),
-  ]);
+  );
 
 const SendForm = (state, actions) =>
-  h("form", undefined, [
-    h("label", undefined, [
+  h(
+    "form",
+    undefined,
+    h(
+      "label",
+      undefined,
       h("span", undefined, "To: "),
       h("input", {
         type: "text",
-        placeholder: "BOB",
+        placeholder: "TO:",
         value: state.form.to,
         oninput: actions.form.onToChange,
         oncreate: el => el.focus(),
       }),
-    ]),
-    h("label", undefined, [
+    ),
+    h(
+      "label",
+      undefined,
       h("span", undefined, "Message: "),
       h("textarea", {
-        placeholder: "hi",
+        placeholder: "message...",
         value: state.form.message,
         oninput: actions.form.onMessageChange,
       }),
-    ]),
+    ),
     h("button", { type: "submit", onclick: actions.send }, "ENTER"),
-  ]);
+  );
 
 const Popup = (state, actions) =>
-  state.popup
-    ? h("div", { id: "modal", class: "modal" }, [
-        h("div", { class: "modal-content" }, [
-          h("span", { class: "modal-close", onclick: actions.closeModal }, "×"),
-          (() => {
-            switch (state.popup.type) {
-              case "mail":
-                return MailModal(state.popup.props, state, actions);
-              case "sent":
-                return SentModal(state.popup.props, state, actions);
-              default:
-                return undefined;
-            }
-          })(),
-        ]),
-      ])
-    : undefined;
+  h(
+    "div",
+    { id: "modal", class: "modal" },
+    h(
+      "div",
+      { class: "modal-content" },
+      h("span", { class: "modal-close", onclick: actions.closeModal }, "×"),
+      (() => {
+        switch (state.popup.type) {
+          case "mail":
+            return MailModal(state.popup.props, state, actions);
+          case "sent":
+            return SentModal(state.popup.props, state, actions);
+          default:
+            return undefined;
+        }
+      })(),
+    ),
+  );
+
+const Mailbox = (state, actions) =>
+  h(
+    "div",
+    { id: "mailbox" },
+    h(
+      "ul",
+      undefined,
+      state.inbox.map(m =>
+        h(
+          "li",
+          { class: "mailbox-message", onclick: () => actions.openMail(m) },
+          h("span", undefined, "✉"),
+          h("span", undefined, m.from),
+        ),
+      ),
+    ),
+  );
+
+const Header = name =>
+  h("header", undefined, h("h1", undefined, `WELCOME${name ? " " + name : ""}!`));
+
+const Footer = logout =>
+  h(
+    "footer",
+    undefined,
+    h(
+      "p",
+      undefined,
+      "Your message will show up right after it is sent. Once shown, your message is deleted.",
+    ),
+    h(
+      "div",
+      {
+        style: {
+          display: "flex",
+          justifyContent: "space-between",
+          maxWidth: "500px",
+          width: "100%",
+        },
+      },
+      h("a", { href: "#TODO" }, "source"),
+      h("a", { href: "#", onclick: actions.logout }, "logout"),
+    ),
+  );
 
 const view = (state, actions) => {
-  const mailbox = state.name
-    ? [
-        h("h2", undefined, "Mailbox"),
-        h(
-          "ul",
-          undefined,
-          state.inbox.map(m =>
-            h("li", undefined, [
-              h("div", { class: "mailbox-message", onclick: () => actions.openMail(m) }, [
-                h("span", undefined, `From: ${m.from}`),
-              ]),
-            ]),
-          ),
-        ),
-      ]
-    : undefined;
   return h("div", { id: "app", oncreate: actions.login }, [
-    h("header", undefined, h("h1", undefined, `WELCOME${state.name ? " " + state.name : ""}!`)),
+    Header(state.name),
     h("main", undefined, state.name ? SendForm(state, actions) : LoginForm(state, actions)),
-    h("div", { id: "mailbox" }, mailbox),
-    h("footer", undefined, [
-      h(
-        "p",
-        undefined,
-        "Your message will show up right after it is sent. Once shown, your message is deleted.",
-      ),
-      h("a", { href: "https://git.tws.website/t/snaptext" }, "source"),
-      h("a", { href: "#", onclick: actions.logout }, "logout"),
-    ]),
-    Popup(state, actions),
+    state.name && Mailbox(state, actions),
+    Footer(),
+    state.popup && Popup(state, actions),
   ]);
 };
 
