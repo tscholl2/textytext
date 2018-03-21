@@ -57,10 +57,10 @@ const state = (initialState = {
 });
 
 // <DEBUG>
-state.name = "ALICE";
-for (let i = 0; i < 2; i++) {
-  state.inbox.push({ to: "ALICE", from: "BOB", message: `hi ${i}`, date: new Date().toJSON() });
-}
+// state.name = "ALICE";
+// for (let i = 0; i < 2; i++) {
+//   state.inbox.push({ to: "ALICE", from: "BOB", message: `hi ${i}`, date: new Date().toJSON() });
+// }
 // </DEBUG>
 
 const actions = {
