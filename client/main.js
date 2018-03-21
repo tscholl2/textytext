@@ -57,10 +57,10 @@ const state = (initialState = {
 });
 
 // <DEBUG>
-// state.name = "ALICE";
-// for (let i = 0; i < 2; i++) {
-//   state.inbox.push({ to: "ALICE", from: "BOB", message: `hi ${i}`, date: new Date().toJSON() });
-// }
+state.name = "ALICE";
+for (let i = 0; i < 2; i++) {
+  state.inbox.push({ to: "ALICE", from: "BOB", message: `hi ${i}`, date: new Date().toJSON() });
+}
 // </DEBUG>
 
 const actions = {
@@ -140,7 +140,7 @@ const LoginForm = (state, actions) =>
     h("input", {
       style: { height: "50px", width: "200px", marginBottom: "20px" },
       type: "text",
-      placeholder: "ALICE",
+      placeholder: "NAME",
       value: state.form.name,
       oninput: actions.form.onNameChange,
       oncreate: el => el.focus(),
