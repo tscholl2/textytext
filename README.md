@@ -26,6 +26,12 @@ go build
 
 ## Screenshots
 
+---
+
 ![sample image 1](screenshots/Capture.PNG)
 
+---
+
 ![sample image 2](screenshots/Capture2.PNG)
+
+---
