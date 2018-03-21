@@ -57,10 +57,10 @@ const state = (initialState = {
 });
 
 // <DEBUG>
-state.name = "ALICE";
-for (let i = 0; i < 2; i++) {
-  state.inbox.push({ to: "ALICE", from: "BOB", message: `hi ${i}`, date: new Date().toJSON() });
-}
+// state.name = "ALICE";
+// for (let i = 0; i < 2; i++) {
+//   state.inbox.push({ to: "ALICE", from: "BOB", message: `hi ${i}`, date: new Date().toJSON() });
+// }
 // </DEBUG>
 
 const actions = {
@@ -74,14 +74,14 @@ const actions = {
     if (state.form.name === state.name) {
       return;
     }
-    router.goTo(`/?name=${encodeURIComponent(state.form.name)}`);
+    router.goTo(`${window.location.pathname}?name=${encodeURIComponent(state.form.name)}`);
     messenger.connect(state.form.name, actions.recieve);
     return { name: state.form.name };
   },
   logout: e => state => {
     e && e.preventDefault && e.preventDefault();
     messenger.connect(); // disconnects
-    router.goTo(`/`);
+    router.goTo(window.location.pathname);
     return { name: "", from: { to: "", message: "", name: "" }, popup: undefined, inbox: [] };
   },
   send: e => (state, actions) => {
@@ -203,7 +203,12 @@ const SendForm = (state, actions) =>
 const Popup = (state, actions) =>
   h(
     "div",
-    { id: "modal", class: "modal" },
+    {
+      oncreate: el => el.focus(),
+      class: "modal",
+      tabindex: "1",
+      onkeydown: e => e.key === "Escape" && actions.closeModal(),
+    },
     h(
       "div",
       { class: "modal-content" },
@@ -255,7 +260,11 @@ const Header = name =>
   h(
     "header",
     { style: { textAlign: "center" } },
-    h("h1", { style: { fontSize: "4em", fontWeight: "700" } }, `WELCOME${name ? " " + name : ""}!`),
+    h(
+      "h1",
+      { style: { fontSize: "4em", fontWeight: "700" } },
+      name ? `WELCOME ${name}!` : "TextyText",
+    ),
   );
 
 const Footer = logout =>
@@ -270,7 +279,7 @@ const Footer = logout =>
       },
     },
     h("a", { href: "#", onclick: logout }, "logout"),
-    h("a", { href: "#TODO" }, "source"),
+    h("a", { href: "https://github.com/tscholl2/textytext" }, "source"),
   );
 
 const view = (state, actions) => {

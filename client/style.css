@@ -65,7 +65,7 @@ footer {
 }
 .mail-modal-to::before {
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 300;
   content: "To: ";
   color: rgba(0, 0, 0, 0.6);
 }
@@ -75,7 +75,7 @@ footer {
 }
 .mail-modal-from::before {
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 300;
   content: "From: ";
   color: rgba(0, 0, 0, 0.6);
 }
@@ -83,6 +83,8 @@ footer {
   margin-top: 10px;
 }
 .mail-modal-message::before {
+  font-size: 1rem;
+  font-weight: 300;
   content: "Message: ";
   color: rgba(0, 0, 0, 0.6);
 }
